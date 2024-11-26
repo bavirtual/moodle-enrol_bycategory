@@ -20,11 +20,6 @@ jobs:
             actions: write
 
       - name: Trigger workflow
-        run: >-
-          gh workflow
-          run dockerpublish.yml
-          --repo bavirtual/moodle-docker
-          --ref main
-          --field logLevel=debug
-        env:
-          GITHUB_TOKEN: ${{steps.access-token.outputs.token}}
+        run: |
+          curl -H "Authorization: token ${{ steps.access-token.outputs.token }}"
+          https://api.github.com/repos/bavirtual/moodle-docker/actions/workflows/dockerpublish.yml
