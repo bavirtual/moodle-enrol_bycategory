@@ -21,4 +21,7 @@ jobs:
 
       - name: Trigger workflow
         run: |
-          curl -H "Authorization: token ${{ steps.access-token.outputs.token }}" https://api.github.com/repos/bavirtual/moodle-docker/actions/workflows/dockerpublish.yml
+          curl -X POST \
+          -H "Authorization: token ${{steps.access-token.outputs.token}}" \
+          https://api.github.com/repos/bavirtual/moodle-docker/dispatches -d \
+          '{"event_type": "workflow_dispatch"}'
