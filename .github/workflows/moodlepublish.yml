@@ -22,7 +22,8 @@ jobs:
       - name: Trigger workflow
         run: >-
           gh workflow
-          run bavirtual/moodle-docker/.github/workflows/dockerpublish.yml
+          run dockerpublish.yml
+          --repo bavirtual/moodle-docker
           --field logLevel=debug
         env:
           GITHUB_TOKEN: ${{steps.access-token.outputs.token}}
