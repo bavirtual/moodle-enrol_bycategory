@@ -24,6 +24,7 @@ jobs:
           gh workflow
           run dockerpublish.yml
           --repo bavirtual/moodle-docker
+          --ref main
           --field logLevel=debug
         env:
           GITHUB_TOKEN: ${{steps.access-token.outputs.token}}
