@@ -10,4 +10,3 @@ statements:
 
     permissions: # https://docs.github.com/en/rest/authentication/permissions-required-for-github-apps
       contents: read
-      actions: write
