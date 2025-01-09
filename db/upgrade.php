@@ -35,8 +35,8 @@ function xmldb_enrol_bycategory_upgrade($oldversion) {
     if ($oldversion < 2024061100) {
 
         // Define table enrol_bycategory_waitlist to be created.
-        $table = new xmldb_table('enrol_bycategory_waitlist');
-        $field = new xmldb_field('senioritydate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table = new \xmldb_table('enrol_bycategory_waitlist');
+        $field = new \xmldb_field('senioritydate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
 
         // Launch addition of the session id field.
         if (!$dbman->field_exists($table, $field)) {

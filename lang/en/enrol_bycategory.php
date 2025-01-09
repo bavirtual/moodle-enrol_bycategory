@@ -127,6 +127,7 @@ This is a notification that your enrolment in the course "{$a->course}" is due t
 If you need help, please contact {$a->enroller}.';
 $string['expirynotifyall'] = 'Teacher and enrolled user';
 $string['expirynotifyenroller'] = 'Teacher only';
+$string['externalserviceerror'] = 'External service \'{$a->service}\' returned {$a->code} error';
 $string['joinwaitlist'] = 'Join the waiting list';
 $string['joinwaitlistmessage'] = 'You can join the waiting list and will be informed whenever a slot becomes available.';
 $string['leavewaitlist'] = 'Leave waiting list';

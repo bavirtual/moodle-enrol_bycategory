@@ -1,5 +1,11 @@
 # Change log
 
+## [2025011000] - RELEASED 2025-01-10
+
+### Fixed
+
+- reference to invalid lang string
+
 ## [2024112600] - RELEASED 2024-11-26
 
 ### Fixed

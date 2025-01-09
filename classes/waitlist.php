@@ -505,7 +505,7 @@ class enrol_bycategory_waitlist {
 		$data = curl_exec($ch);
 		$httpcode = curl_getinfo($ch,CURLINFO_HTTP_CODE);
 		if($httpcode != 200)
-			throw new \Exception(get_string('googletimezoneerror', 'local_booking'));
+			throw new \Exception(get_string('externalserviceerror', 'enrol_bycategory', ['service'=>$url, 'code'=>$httpcode]));
 
 		return $data;
 	}

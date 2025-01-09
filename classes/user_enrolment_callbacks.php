@@ -20,7 +20,7 @@ namespace enrol_bycategory;
  * Hook callbacks to get the enrolment information.
  *
  * @package    enrol_bycategory
- * @copyright  2024 Mustafa Hajjar <mustafahajjar@gmail.com>
+ * @copyright  2024 Mustafa Hajjar <mustafa.hajjar>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_enrolment_callbacks {
