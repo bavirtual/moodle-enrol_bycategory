@@ -219,3 +219,4 @@ If you have not done so already, you should edit your profile page so that we ca
 
   {$a->profileurl}';
 $string['wrongtokenuser'] = 'The link was meant for another user. Please wait until you receive your Email.';
+$string['youareonthewaitlist'] = 'You are currently on the waiting list.';
