@@ -364,7 +364,7 @@ class enrol_bycategory_waitlist {
                         e.customint3 = 0
                         OR (
                             e.customint3 > (
-                                SELECT COUNT(id) FROM {user_enrolments} ue WHERE ue.enrolid = e.id
+                                SELECT COUNT(id) FROM {user_enrolments} ue WHERE ue.enrolid = e.id AND ue.status = 0
                             )
                         )
                     )
@@ -424,7 +424,7 @@ class enrol_bycategory_waitlist {
 
             // check if notify count is based on specified settings or available spots (0)
             if ($usernotifycount == 0) {
-                $enroledcount = $DB->count_records('user_enrolments', ['enrolid' => $instance->id]);
+                $enroledcount = $DB->count_records('user_enrolments', ['enrolid' => $instance->id, 'status' => 0]);
                 $userstonotify = $instance->customint3 >= $enroledcount ? $instance->customint3 - $enroledcount : 0;
             }
 

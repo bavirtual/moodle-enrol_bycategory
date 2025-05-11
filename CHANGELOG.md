@@ -1,5 +1,11 @@
 # Change log
 
+## [2025051100] - RELEASED 2025-05-11
+
+### Fixed
+
+- available spots based on active enrollments and not total enrollments
+
 ## [2025011000] - RELEASED 2025-01-11
 
 ### Fixed
