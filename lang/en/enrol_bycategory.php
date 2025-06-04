@@ -210,7 +210,7 @@ $string['waitlist_removed_notification_subject'] = '{$a->coursename} - removed f
 $string['waitlist_removed_notification_body'] = '<div style="font-family:sans-serif"><p>Dear {$a->firstname},</p><p>Due to your unresponsiveness in enrolling in the {$a->coursename} course, you have been removed from the waitlist.</p>
   <p>We attempted to reach you on this email address {$a->usernotifytotalcount} times with instructions to self-enrol or opt-out, but no action was taken on your part.</p>
   <p>Best regards,</p><p>&nbsp;</p><p>Training Staff</p>';
-$string['waitlist_status_info'] = 'Up to {$a->notifycount} Users from the waiting list are informed about an open spot in this course {$a->nextruntime}.
+$string['waitlist_status_info'] = 'Up to {$a->notifycount} users from the waiting list are informed about an open spot in this course. Next reminder will be sent on {$a->nextruntime}.
 Users are only informed {$a->notifylimit} times without reaction until they are removed from the waitlist.';
 $string['welcometocourse'] = 'Welcome to {$a}';
 $string['welcometocoursetext'] = 'Welcome to {$a->coursename}!

@@ -302,7 +302,7 @@ class enrol_bycategory_waitlist {
 
         if ($instance->customint3 > 0) {
             // Max enrol limit specified.
-            $count = $DB->count_records('user_enrolments', ['enrolid' => $instance->id]);
+            $count = $DB->count_records('user_enrolments', ['enrolid' => $instance->id, 'status' => 0]);
             if ($count >= $instance->customint3) {
                 // Bad luck, no more self enrolments here.
                 return get_string('maxenrolledreached', 'enrol_bycategory');
@@ -401,22 +401,18 @@ class enrol_bycategory_waitlist {
     public static function select_users_from_waitlist_for_notification($enrolids) {
         global $DB;
 
+        // number of users to notify
         $usernotifycount = get_config('enrol_bycategory', 'waitlistnotifycount');
         if ($usernotifycount === false) {
             $usernotifycount = 5;
         }
-        $userstonotify = $usernotifycount;
 
         $usernotifylimit = get_config('enrol_bycategory', 'waitlistnotifylimit');
         if ($usernotifylimit === false) {
             $usernotifylimit = 5;
         }
 
-        $nextreminderdays = get_config('enrol_bycategory', 'waitlistnotifyperiod');
-        if ($nextreminderdays === false) {
-            $nextreminderdays = 3;
-        }
-
+        $sortcolumn = !empty($instance->customint8) ? 'senioritydate' : 'timecreated';
         $waitlistentries = [];
 
         foreach ($enrolids as $enrolid) {
@@ -435,8 +431,7 @@ class enrol_bycategory_waitlist {
                             SELECT *, ROW_NUMBER() OVER (PARTITION BY instanceid ORDER BY $sortcolumn ASC) r
                             FROM {enrol_bycategory_waitlist}
                             WHERE instanceid = $enrolid
-                                AND notified < :notifylimit
-                                AND (DATEDIFF(CURDATE(), FROM_UNIXTIME(timemodified)) > :nextreminder OR notified > 0)
+                                AND notified <= :notifylimit
                         )
                         SELECT * FROM waitlist_window WHERE r <= :useramount";
 
@@ -444,7 +439,6 @@ class enrol_bycategory_waitlist {
                     'sortcolumn'  => $sortcolumn,
                     'useramount'  => $userstonotify,
                     'notifylimit' => $usernotifylimit,
-                    'nextreminder'=> $nextreminderdays,
                 ]);
                 $waitlistentries = $waitlistentries + $entries;
             }
@@ -456,21 +450,18 @@ class enrol_bycategory_waitlist {
     /**
      * Increase notified field based on an array of enrol_bycategory_waitlist ids
      *
-     * @param array $waitlistids Array of enrol_bycategory_waitlist ids
+     * @param int $waitlistid id of enrol_bycategory_waitlist id
      *
      * @return mixed|null
      */
-    public static function increase_notified($waitlistids) {
+    public static function increase_notified($waitlistid) {
         global $DB;
 
-        list($insql, $inparams) = $DB->get_in_or_equal($waitlistids, SQL_PARAMS_NAMED);
         $sql = "UPDATE {enrol_bycategory_waitlist}
-                   SET notified = notified + 1, timemodified = :now
-                 WHERE id $insql";
+                   SET notified = notified + 1, timemodified = UNIX_TIMESTAMP()
+                 WHERE id = $waitlistid";
 
-        $result = $DB->execute($sql, [
-            'now' => time(),
-        ] + $inparams);
+        $result = $DB->execute($sql);
 
         return $result;
     }

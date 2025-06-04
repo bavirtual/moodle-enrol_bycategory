@@ -1,5 +1,13 @@
 # Change log
 
+## [2025060400] - RELEASED 2025-06-04
+
+### Fixed
+
+- notifications sent w/o incrementing counter
+- available spots based on active students not enroled students
+- messaging
+
 ## [2025051100] - RELEASED 2025-05-11
 
 ### Fixed

@@ -864,16 +864,18 @@ class enrol_bycategory_plugin extends enrol_plugin {
 
             foreach ($waitlistentries as $waitlistentry) {
 
-                // skip if the user notification period has not passed yet
+                // skip if the user notification period has not passed yet (1day = 86400sec)
                 $nextreminderts = $waitlistentry->timemodified + ($nextreminderdays * 86400);
+                $user = $DB->get_record('user', ['id' => $waitlistentry->userid]);
+                $userfullname = fullname($user, true) . ' ' . $USER->alternatename;
                 if ($nextreminderts > time() && $waitlistentry->notified > 0) {
-                    $trace->output(str_repeat(" ", 8) . "user $waitlistentry->userid skipped, next notification time not reached");
+                    $trace->output(str_repeat(" ", 8) . "user '$userfullname' skipped, next notification time not reached");
                     continue;
                 }
 
-                $token = $this->create_token();
-                $user = $DB->get_record('user', ['id' => $waitlistentry->userid]);
                 $instance = $DB->get_record('enrol', ['id' => $waitlistentry->instanceid], '*', MUST_EXIST);
+                // create a token for the user to confirm enrolment
+                $token = $this->create_token();
                 $params = [
                     'token' => $token,
                     'waitlistid' => $waitlistentry->id,
@@ -903,7 +905,7 @@ class enrol_bycategory_plugin extends enrol_plugin {
                 $a->firstname = \core_user::get_user($waitlistentry->userid)->firstname;
                 $a->notifyamount = $usernotifycount - 1;
                 $a->usernotifiedcount = $waitlistentry->notified + 1;
-                $a->usernotifytotalcount = $this->get_config('waitlistnotifylimit') - 1;
+                $a->usernotifytotalcount = $this->get_config('waitlistnotifylimit');
 
                 // custom enrolment notification message, but on the last time send notification of being removed from the waitlist
                 if ($a->usernotifiedcount <= $a->usernotifytotalcount) {
@@ -932,8 +934,9 @@ class enrol_bycategory_plugin extends enrol_plugin {
                 $message->notification = 1; // This is only set to 0 for personal messages between users.
                 $messageid = message_send($message);
 
-                // cc course manager(s)
+
                 if ($a->usernotifiedcount <= $a->usernotifytotalcount) {
+                    // copy course leadership on the notification
                     $context = \context_course::instance($course->id);
                     $teachers = get_enrolled_users($context, 'enrol/bycategory:manage', 0 , 'u.*', null, 0, 0, true);
                     $ccsubject = get_string('waitlist_notification_ccsubject', 'enrol_bycategory', $a);
@@ -955,19 +958,21 @@ class enrol_bycategory_plugin extends enrol_plugin {
 
                         message_send($ccmessage);
                     }
+
+                    // increase notification count where applicable and log trace message
+                    force_current_language($oldforcelang);
+                    if ($messageid) {
+                        // Increase notified count for user that was notified.
+                        enrol_bycategory_waitlist::increase_notified($waitlistentry->id);
+                        $trace->output(str_repeat(" ", 8) . "notifying user '$userfullname' that there is a spot available in the '$course->shortname' course.");
+                    } else {
+                        $trace->output(str_repeat(" ", 8) . "error notifying user '$userfullname' that there is a spot available in the '$course->shortname' course.");
+                    }
                 } else {
                     // remove the student from the waitlist if has not responded
                     $waitlist = new enrol_bycategory_waitlist($waitlistentry->instanceid);
                     $waitlist->remove_user($waitlistentry->userid);
-                }
-
-                force_current_language($oldforcelang);
-
-                if ($messageid) {
-                    $trace->output(str_repeat(" ", 8) . "notifying user $user->id that there is a spot available in $course->id.");
-                    enrol_bycategory_waitlist::increase_notified(array_keys($waitlistentries));
-                } else {
-                    $trace->output(str_repeat(" ", 8) . "error notifying user $user->id that there is a spot available in $course->id.");
+                    $trace->output(str_repeat(" ", 8) . "user '$userfullname' was removed from the '$course->shortname' course waitlist due to unresponsiveness.");
                 }
 
             }
