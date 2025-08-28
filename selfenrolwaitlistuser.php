@@ -68,8 +68,14 @@ $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
 $PAGE->set_url('/enrol/bycategory/selfenrolwaitlistuser.php', ['token' => $token]);
 
 $canenrol = $waitlist->can_enrol($instance, $userid, true);
+
 // Sorry you missed your chance, try again next time.
 if ($canenrol !== true) {
+
+    if (is_string($canenrol)) {
+        redirect($waitlisturl, $canenrol, null, notification::NOTIFY_WARNING);
+    }
+
     $waitlist->reset_notification_counter($user->id);
     $DB->delete_records($tokentablename, ['id' => $tokenrecord->id]);
     redirect($waitlisturl, get_string('enrolchancemissed', 'enrol_bycategory'), null, notification::NOTIFY_INFO);

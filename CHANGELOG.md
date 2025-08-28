@@ -1,5 +1,11 @@
 # Change log
 
+## [2025082800] - RELEASED 2025-08-28
+
+### Fixed
+
+- waitlisted students enrolling after category restriction activation not being notified of the reason for not being enrolled
+
 ## [2025060400] - RELEASED 2025-06-04
 
 ### Fixed

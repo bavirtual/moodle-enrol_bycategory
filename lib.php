@@ -864,12 +864,14 @@ class enrol_bycategory_plugin extends enrol_plugin {
 
             foreach ($waitlistentries as $waitlistentry) {
 
+                $course = $courseswithspace[$waitlistentry->instanceid];
+                $user = $DB->get_record('user', ['id' => $waitlistentry->userid]);
+                $userfullname = fullname($user, true);
+
                 // skip if the user notification period has not passed yet (1day = 86400sec)
                 $nextreminderts = $waitlistentry->timemodified + ($nextreminderdays * 86400);
-                $user = $DB->get_record('user', ['id' => $waitlistentry->userid]);
-                $userfullname = fullname($user, true) . ' ' . $USER->alternatename;
                 if ($nextreminderts > time() && $waitlistentry->notified > 0) {
-                    $trace->output(str_repeat(" ", 8) . "user '$userfullname' skipped, next notification time not reached");
+                    $trace->output(str_repeat(" ", 8) . "user '$userfullname' in course '$course->shortname' skipped, next notification time not reached");
                     continue;
                 }
 
@@ -885,8 +887,6 @@ class enrol_bycategory_plugin extends enrol_plugin {
                     'timemodified' => $now,
                 ];
                 $DB->insert_record('enrol_bycategory_token', $params, false, false);
-
-                $course = $courseswithspace[$waitlistentry->instanceid];
                 $oldforcelang = force_current_language($user->lang);
 
                 $usernotifycount = get_config('enrol_bycategory', 'waitlistnotifycount');
